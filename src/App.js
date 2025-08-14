@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc, serverTimestamp, orderBy, deleteDoc, getDocs, where, setDoc, writeBatch, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 import { getAuth, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, sendPasswordResetEmail, updateEmail, deleteUser } from 'firebase/auth';
@@ -557,16 +557,16 @@ export default function App() {
     const [homePage, setHomePage] = useState(1); 
     const LISTS_PER_PAGE = 4;
 
-    const showNotification = (message, type = 'success') => {
+    const showNotification = useCallback((message, type = 'success') => {
         setNotification({ message, type, visible: true });
         setTimeout(() => setNotification({ message: '', type: '', visible: false }), 3000);
-    };
+    }, []);
 
     const censorText = (text) => {
         return badWords.reduce((acc, word) => acc.replace(new RegExp(word, 'gi'), '*'.repeat(word.length)), text);
     };
 
-    const seedDatabase = async () => {
+    const seedDatabase = useCallback(async () => {
         if (!db) return;
         const sampleLists = [
             { title: "Best Wireless Headphones", description: "For music lovers, commuters, and everyone in between.", category: "Technology", items: [ { name: "Sony WH-1000XM5", baseVotes: 1204, votedBy: [] }, { name: "Bose QuietComfort Ultra", baseVotes: 987, votedBy: [] }, { name: "Apple AirPods Max", baseVotes: 852, votedBy: [] } ], author: 'system', createdAt: serverTimestamp() },
@@ -587,7 +587,7 @@ export default function App() {
             await addDoc(collection(db, 'lists'), list);
         }
         showNotification("Sample lists added!", "success");
-    };
+    }, [db, showNotification]);
 
     useEffect(() => {
         const app = initializeApp(firebaseConfig);
@@ -637,7 +637,7 @@ export default function App() {
             setLoading(false);
         });
         return unsubscribeFirestore;
-    }, [user, db]);
+    }, [user, db, seedDatabase]);
 
     const navigateTo = (page, data = null) => {
         setCurrentPage(page);
