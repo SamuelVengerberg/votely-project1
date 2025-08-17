@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc, serverTimestamp, orderBy, deleteDoc, getDocs, where, setDoc, writeBatch, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
+import { getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc, serverTimestamp, orderBy, deleteDoc, getDocs, where, setDoc, writeBatch, arrayUnion, arrayRemove, increment, limit, startAfter } from 'firebase/firestore';
 import { getAuth, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, sendPasswordResetEmail, updateEmail, deleteUser } from 'firebase/auth';
 
-// --- Hardcoded Firebase Configuration ---
+// --- Secure Firebase Configuration ---
+// This configuration now reads from environment variables.
 const firebaseConfig = {
-  apiKey: "AIzaSyAwoak1xNoP4oWtLiLPJqA4-xHXTLOxZdY",
-  authDomain: "votely-30af6.firebaseapp.com",
-  projectId: "votely-30af6",
-  storageBucket: "votely-30af6.appspot.com",
-  messagingSenderId: "272205166453",
-  appId: "1:272205166453:web:your-web-app-id"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID
 };
 
 // --- ADMIN CONFIGURATION ---
@@ -538,6 +539,89 @@ const AccountPage = ({ auth, user, showNotification, navigateTo }) => {
     );
 };
 
+// --- About Us Page Component ---
+const AboutPage = () => (
+    <div className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">About Votely</h2>
+            <div className="space-y-4 text-gray-700">
+                <p>Welcome to Votely, the place where the best recommendations rise to the top.</p>
+                <h3 className="text-xl font-semibold text-gray-800 pt-4">Our Mission</h3>
+                <p>In a world saturated with sponsored reviews and biased opinions, finding honest recommendations you can actually trust is harder than ever. Votely was created to solve that problem. Our mission is to empower communities to collectively decide what's best, creating definitive, unbiased rankings for everything from the best coffee maker to the best travel destinations.</p>
+                <h3 className="text-xl font-semibold text-gray-800 pt-4">How It Works</h3>
+                <p>Votely is powered by you. Our platform is built on a simple principle: the wisdom of the crowd is more reliable than the opinion of a single expert.</p>
+                <ul className="list-disc list-inside space-y-2">
+                    <li><strong>Create a List:</strong> Anyone can start a list for any category they can think of.</li>
+                    <li><strong>Add an Item:</strong> Have a favorite product, place, or movie? Add it to a list for others to discover.</li>
+                    <li><strong>Vote:</strong> Upvote the items you agree with. The more votes an item gets, the higher it climbs in the rankings.</li>
+                    <li><strong>Discuss:</strong> Share your experiences and opinions in the comments to help others make informed decisions.</li>
+                </ul>
+                <p>Our goal is to create a transparent and community-driven platform where the best of everything can be discovered and celebrated. Thank you for being a part of our community.</p>
+            </div>
+        </div>
+    </div>
+);
+
+// --- Terms and Conditions Page Component ---
+const TermsPage = () => (
+    <div className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Terms and Conditions</h2>
+            <p className="text-sm text-gray-500 mb-6">Last Updated: August 17, 2025</p>
+            <div className="space-y-4 text-gray-700">
+                <p>Welcome to Votely! These terms and conditions outline the rules and regulations for the use of our website.</p>
+                <p>By accessing this website, we assume you accept these terms and conditions. Do not continue to use Votely if you do not agree to all of the terms and conditions stated on this page.</p>
+                <h3 className="text-xl font-semibold text-gray-800 pt-4">1. User Accounts</h3>
+                <ul className="list-disc list-inside space-y-2">
+                    <li>To contribute content or vote on our platform, you may be required to create an account. You are responsible for maintaining the confidentiality of your account and password.</li>
+                    <li>You must be at least 13 years of age to use this service.</li>
+                    <li>You agree to provide accurate and complete information when creating your account.</li>
+                </ul>
+                <h3 className="text-xl font-semibold text-gray-800 pt-4">2. User-Generated Content</h3>
+                <ul className="list-disc list-inside space-y-2">
+                    <li>You are solely responsible for the content you post, including lists, items, and comments. You grant Votely a non-exclusive, royalty-free, perpetual, and worldwide license to use, reproduce, and display your content in connection with the service.</li>
+                    <li>You agree not to post content that is illegal, obscene, defamatory, threatening, infringing on intellectual property rights, or otherwise injurious to third parties.</li>
+                    <li>We reserve the right, but not the obligation, to remove or edit any content that violates these terms.</li>
+                </ul>
+                <h3 className="text-xl font-semibold text-gray-800 pt-4">3. Prohibited Activities</h3>
+                <p>You are specifically restricted from all of the following:</p>
+                <ul className="list-disc list-inside space-y-2">
+                    <li>Using this website in any way that is or may be damaging to this website.</li>
+                    <li>Using this website in any way that impacts user access to this website.</li>
+                    <li>Engaging in any data mining, data harvesting, data extracting, or any other similar activity in relation to this website.</li>
+                    <li>Using this website to engage in any advertising or marketing without our prior written consent.</li>
+                </ul>
+                <h3 className="text-xl font-semibold text-gray-800 pt-4">4. Limitation of Liability</h3>
+                <p>In no event shall Votely, nor any of its officers, directors, and employees, be held liable for anything arising out of or in any way connected with your use of this website. The content on this website represents the opinions of its users and not of Votely.</p>
+                <h3 className="text-xl font-semibold text-gray-800 pt-4">5. Changes to Terms</h3>
+                <p>We reserve the right to revise these terms and conditions at any time. By using this website, you are expected to review these terms on a regular basis.</p>
+            </div>
+        </div>
+    </div>
+);
+
+// --- Contact Us Page Component ---
+const ContactPage = () => (
+    <div className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
+            <p className="text-gray-600 mb-8">We'd love to hear from you! Whether you have a question, feedback, or a suggestion, please don't hesitate to get in touch.</p>
+            <div className="space-y-6">
+                <div>
+                    <h3 className="text-xl font-semibold text-gray-800">General Inquiries</h3>
+                    <p className="text-gray-600 mt-1">For all general questions, feedback, and support requests, please email us at:</p>
+                    <a href="mailto:support@vote-ly.com" className="text-indigo-600 hover:underline">support@vote-ly.com</a>
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold text-gray-800">Partnership Inquiries</h3>
+                    <p className="text-gray-600 mt-1">If you are interested in partnering with Votely, please contact our partnerships team at:</p>
+                    <a href="mailto:partnerships@vote-ly.com" className="text-indigo-600 hover:underline">partnerships@vote-ly.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 
 // --- Main App Component ---
 export default function App() {
@@ -943,6 +1027,12 @@ export default function App() {
                 return <ListFormPage {...{ handleUpdateList, navigateTo, listToEdit: selectedList, showNotification }} />;
             case 'account':
                 return <AccountPage {...{ auth, user, showNotification, navigateTo }} />;
+            case 'about':
+                return <AboutPage />;
+            case 'terms':
+                return <TermsPage />;
+            case 'contact':
+                return <ContactPage />;
             default:
                 return renderHomePage();
         }
@@ -975,9 +1065,14 @@ export default function App() {
                 </div>
             </header>
             {renderContent()}
-            <footer className="bg-white">
+            <footer className="bg-white border-t">
                 <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-                    &copy; {new Date().getFullYear()} Votely. All rights reserved.
+                    <div className="flex justify-center space-x-6 mb-4">
+                        <button onClick={() => navigateTo('about')} className="text-sm text-gray-500 hover:text-indigo-600">About Us</button>
+                        <button onClick={() => navigateTo('terms')} className="text-sm text-gray-500 hover:text-indigo-600">Terms & Conditions</button>
+                        <button onClick={() => navigateTo('contact')} className="text-sm text-gray-500 hover:text-indigo-600">Contact Us</button>
+                    </div>
+                    <p>&copy; {new Date().getFullYear()} Votely. All rights reserved.</p>
                 </div>
             </footer>
         </div>
