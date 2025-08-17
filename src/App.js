@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc, serverTimestamp, orderBy, deleteDoc, getDocs, where, setDoc, writeBatch, arrayUnion, arrayRemove, increment, limit, startAfter } from 'firebase/firestore';
+import { getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc, serverTimestamp, orderBy, deleteDoc, getDocs, where, setDoc, writeBatch, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 import { getAuth, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, sendPasswordResetEmail, updateEmail, deleteUser } from 'firebase/auth';
 
 // --- Hardcoded Firebase Configuration ---
