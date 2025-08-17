@@ -3,15 +3,14 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc, serverTimestamp, orderBy, deleteDoc, getDocs, where, setDoc, writeBatch, arrayUnion, arrayRemove, increment, limit, startAfter } from 'firebase/firestore';
 import { getAuth, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, sendPasswordResetEmail, updateEmail, deleteUser } from 'firebase/auth';
 
-// --- Secure Firebase Configuration ---
-// This configuration now reads from environment variables.
+// --- Hardcoded Firebase Configuration ---
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID
+  apiKey: "AIzaSyAwoak1xNoP4oWtLiLPJqA4-xHXTLOxZdY",
+  authDomain: "votely-30af6.firebaseapp.com",
+  projectId: "votely-30af6",
+  storageBucket: "votely-30af6.appspot.com",
+  messagingSenderId: "272205166453",
+  appId: "1:272205166453:web:your-web-app-id"
 };
 
 // --- ADMIN CONFIGURATION ---
